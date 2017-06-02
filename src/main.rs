@@ -4,7 +4,7 @@ use std::io;
 use std::cmp::Ordering;
 use rand::Rng;
 
-fn guess_random_number(to: u32, from: u32){
+fn guess_random_number(to: u32, from: u32) -> bool {
     let secret_number = rand::thread_rng().gen_range(to, from);
 
     loop {
@@ -16,8 +16,14 @@ fn guess_random_number(to: u32, from: u32){
         let guess: u32 = match guess.trim().parse() {
             Ok(num) => num,
             Err(_)  => {
-                println!("Please type a number!\n");
-                continue;
+                let input = guess.trim().to_string();
+                println!("Received '{}' as your input string.", input);
+                if input.to_lowercase().starts_with("q") {
+                   return false;
+                } else {
+                    println!("Please type a number!\n");
+                    continue;
+                }
             },
         };
         println!("You guessed: {}", guess);
@@ -31,12 +37,19 @@ fn guess_random_number(to: u32, from: u32){
             },
         }
     }
-    println!("The secret number was: {}", secret_number);
+    println!("The secret number was: {}\n", secret_number);
+    true
 }
 
 fn main() {
     println!("Guess the number(s)!");
-    println!("--------------------\n");
-    
-    guess_random_number(1, 20);
+    println!("--------------------");
+
+    loop {
+        println!("\nGuess the number(!):");
+        if guess_random_number(1, 21) == false {
+            println!("Quitting game");
+            break;
+        }
+    }
 }
