@@ -2,6 +2,7 @@ extern crate rand;
 
 use std::io;
 use std::io::Write;
+use std::cmp::Ordering;
 
 
 fn receive_number_from_stdin(print_string: &str) -> u32 {
@@ -35,7 +36,6 @@ fn receive_number_from_stdin(print_string: &str) -> u32 {
 
 fn guess_random_number(to: u32, from: u32) -> bool {
     use rand::Rng;
-    use std::cmp::Ordering;
 
     let secret_number = rand::thread_rng().gen_range(to, from);
     loop {
@@ -78,9 +78,29 @@ fn main() {
     println!("Guess the number(s)!");
     println!("--------------------\n");
 
-    let min_number = receive_number_from_stdin("Specify minimum number");
-    let max_number = receive_number_from_stdin("Specify maximum number");
+    let min_number;
+    let max_number;
 
+    // Get a minimum and a maximum number from stdin
+    loop {
+        let temp1 = receive_number_from_stdin("Specify minimum number");
+        let temp2 = receive_number_from_stdin("Specify maximum number");
+        match temp1.cmp(&temp2) {
+            Ordering::Less    => {},
+            Ordering::Equal   => {},
+            Ordering::Greater => {
+                println!("\
+            Please enter a 'minimum number\
+            ' no larger than the given 'maximum number'...");
+                continue;
+            }
+        }
+        min_number = temp1;
+        max_number = temp2;
+        break;
+    }
+
+    // Main loop
     loop {
         println!("\nGuess the number(!):");
         if guess_random_number(min_number, max_number + 1) == false {
