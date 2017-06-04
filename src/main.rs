@@ -1,10 +1,10 @@
 extern crate rand;
 
 use std::io;
+use std::io::Write;
 
 
 fn receive_number_from_stdin(print_string: &str) -> u32 {
-    use std::io::Write;
     use std::process;
 
     print!("{}: ", print_string);
@@ -18,8 +18,9 @@ fn receive_number_from_stdin(print_string: &str) -> u32 {
         Err(_)  => {
             let guess = input.trim().to_string();
             println!("Received '{}' as your input string.", guess);
-            if guess.to_lowercase().starts_with("q") {
-                println!("Quitting game");
+            if guess.to_lowercase().starts_with("q") ||
+               guess.to_lowercase().starts_with("exit") {
+                println!("\nQuitting game");
                 process::exit(0);
             } else {
                 println!("Unable to parse!\nTry again:");
@@ -56,13 +57,14 @@ fn guess_random_number(to: u32, from: u32) -> bool {
                 }
             },
         };
-        println!("You guessed: {}", guess);
+        print!("You guessed: {} => ", guess);
+        io::stdout().flush().ok().expect("Could not flush stdout");
 
         match guess.cmp(&secret_number) {
             Ordering::Less    => println!("Too small!\n"),
             Ordering::Greater => println!("Too big!\n"),
             Ordering::Equal   => {
-                println!("Spot on!\n");
+                println!("Spot on! You won! =DDD\n");
                 break;
             },
         }
@@ -82,7 +84,7 @@ fn main() {
     loop {
         println!("\nGuess the number(!):");
         if guess_random_number(min_number, max_number + 1) == false {
-            println!("Quitting game");
+            println!("\nQuitting game");
             break;
         }
     }
