@@ -5,7 +5,7 @@ use std::io::Write;
 use std::cmp::Ordering;
 
 
-fn receive_number_from_stdin(print_string: &str) -> u32 {
+fn receive_number_from_stdin(print_string: &str) -> i32 {
     use std::process;
 
     print!("{}: ", print_string);
@@ -14,7 +14,7 @@ fn receive_number_from_stdin(print_string: &str) -> u32 {
     io::stdin().read_line(&mut input)
         .expect("Failed to read line");
 
-    let number: u32 = match input.trim().parse() {
+    let number: i32 = match input.trim().parse() {
         Ok(num) => num,
         Err(_)  => {
             let guess = input.trim().to_string();
@@ -34,7 +34,7 @@ fn receive_number_from_stdin(print_string: &str) -> u32 {
 }
 
 
-fn guess_random_number(to: u32, from: u32) -> bool {
+fn guess_random_number(to: i32, from: i32) -> bool {
     use rand::Rng;
 
     let secret_number = rand::thread_rng().gen_range(to, from);
@@ -44,7 +44,7 @@ fn guess_random_number(to: u32, from: u32) -> bool {
         io::stdin().read_line(&mut guess)
             .expect("Failed to read line");
 
-        let guess: u32 = match guess.trim().parse() {
+        let guess: i32 = match guess.trim().parse() {
             Ok(num) => num,
             Err(_)  => {
                 let input = guess.trim().to_string();
