@@ -18,13 +18,13 @@ fn receive_number_from_stdin(print_string: &str) -> i32 {
         Ok(num) => num,
         Err(_)  => {
             let guess = input.trim().to_string();
-            println!("Received '{}' as your input string.", guess);
+            println!("\tReceived '{}' as your input string.", guess);
             if guess.to_lowercase().starts_with("q") ||
                guess.to_lowercase().starts_with("exit") {
                 println!("\nQuitting game");
                 process::exit(0);
             } else {
-                println!("Unable to parse!\nTry again:");
+                println!("\tUnable to parse '{}'! Try again!", input.trim());
                 return receive_number_from_stdin(print_string);
             }
         },
@@ -39,37 +39,20 @@ fn guess_random_number(to: i32, from: i32) -> bool {
 
     let secret_number = rand::thread_rng().gen_range(to, from);
     loop {
-        println!("Please input your guess:");
-        let mut guess = String::new();
-        io::stdin().read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: i32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_)  => {
-                let input = guess.trim().to_string();
-                println!("Received '{}' as your input string.", input);
-                if input.to_lowercase().starts_with("q") {
-                   return false;
-                } else {
-                    println!("Please type a number!\n");
-                    continue;
-                }
-            },
-        };
-        print!("You guessed: {} => ", guess);
+        let guess = receive_number_from_stdin("Please input your guess");
+        print!("\tYou guessed: {} => ", guess);
         io::stdout().flush().ok().expect("Could not flush stdout");
 
         match guess.cmp(&secret_number) {
-            Ordering::Less    => println!("Too small!\n"),
-            Ordering::Greater => println!("Too big!\n"),
+            Ordering::Less    => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
             Ordering::Equal   => {
-                println!("Spot on! You won! =DDD\n");
+                println!("Spot on! You won! =DDD");
                 break;
             },
         }
     }
-    println!("The secret number was: {}\n", secret_number);
+    println!("\tThe secret number was: {}\n", secret_number);
     true
 }
 
@@ -89,7 +72,7 @@ fn main() {
             Ordering::Less    => {},
             Ordering::Equal   => {},
             Ordering::Greater => {
-                println!("\
+                println!("\t\
             Please enter a 'minimum number\
             ' no larger than the given 'maximum number'...");
                 continue;
